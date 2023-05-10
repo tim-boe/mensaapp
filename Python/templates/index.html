@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Academica Main Room</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            text-align: center;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            /* Centers the buttons horizontally */
+        }
+
+        button {
+            background-color: #333;
+            color: white;
+            border: none;
+            font-size: 3vh;
+            border-radius: 1.5vh;
+            margin: 2vh auto;
+            padding: 10px;
+            display: block;
+            min-width: 300px;
+            max-width: 95%;
+            width: 30%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Overview</h1>
+    </header>
+    <div class="button-container">
+        <button onclick="window.location.href = '{{ url_for('academica_main_f') }}';">Academica Main Hall ({{
+            customers["am"] }})</button>
+        <button onclick="window.location.href = '{{ url_for('academica_secret_f') }}';">Academica Secret Room ({{
+            customers["as"] }})</button>
+        <button onclick="window.location.href = '{{ url_for('academica_first_f') }}';">Academica First Room ({{
+            customers["af"] }})</button>
+        <button onclick="window.location.href = '{{ url_for('academica_bp_f') }}';">Academica Burger/Pizza ({{
+            customers["abp"] }})</button>
+        <button onclick="window.location.href = '{{ url_for('academica_wok_f') }}';">Academica Wok ({{ customers["aw"]
+            }})</button>
+        <button onclick="window.location.href = '{{ url_for('vita_f') }}';">Vita ({{ customers["vita"] }})</button>
+    </div>
+
+</body>
+
+</html>
