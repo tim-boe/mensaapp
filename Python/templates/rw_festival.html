@@ -125,6 +125,7 @@
             console.log("bin beim eventlistener");
             var imgOffset = document.getElementById('image').getBoundingClientRect();
             var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            var scrollSide = window.pageXOffset || document.documentElement.scrollSide;
             var imgWidth = $("#image").get(0).offsetWidth;
             var imgHeight = $("#image").get(0).offsetHeight;
             var marker = document.getElementById('marker');
@@ -142,7 +143,7 @@
                 var box = document.createElement('div');
                 box.className = 'speech left';
                 box.innerHTML = name;
-                x = (imgOffset.left + x * imgWidth);
+                x = (imgOffset.left + x * imgWidth + scrollSide);
                 y = (imgOffset.top + y * imgHeight + scrollTop);
                 box.style.left = (x + 10) + 'px';
                 box.style.top = (y - 14) + 'px';
@@ -159,7 +160,8 @@
             var imgWidth = imgOffset.width;
             var imgHeight = imgOffset.height;
             var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            var adjustedX = x + imgOffset.left;
+            var scrollSide = window.pageXOffset || document.documentElement.scrollSide;
+            var adjustedX = x + imgOffset.left + scrollSide;
             var adjustedY = y + imgOffset.top + scrollTop;
             var xp = (x) / imgWidth; // Converting x and y to image-relative values
             var yp = (y) / imgHeight;

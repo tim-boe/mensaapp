@@ -36,6 +36,8 @@ def academica_main_f():
     y = request.form.get("y")
     submit_time = time.time()
     if name is not None:
+        if len(name) > 50:
+            return "ne, dann eben ohne dich...."
         delete_old(academica_main)
         academica_main[name] = [x, y, submit_time]
         print(academica_main)
