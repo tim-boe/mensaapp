@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Festival Map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            text-align: center;
+        }
+
+        img {
+            max-width: 100%;
+            min-width: 80%;
+            height: auto;
+            position: relative;
+            display: block;
+            margin: 0 auto;
+            border-radius: 10px;
+            /* Added to remove bottom margin */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .marker {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .submission {
+            margin-top: 20px;
+
+        }
+
+        #input {
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            max-width: 90%;
+            width: 350px;
+            margin: 10px auto;
+
+        }
+
+        .box {
+            position: absolute;
+            min-width: 40px;
+            height: 30px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 10px;
+            padding: 10px 6px 0px 6px;
+            /* top, right, bottom, left */
+            border: solid;
+        }
+
+        .speech {
+            font-size: calc(1vw + 1vh);
+            color: #fff;
+            background: rgba(0, 0, 0, 0.6);
+            position: absolute;
+            padding: calc(0.5vw + 0.5vh);
+            border-radius: calc(0.5vw + 0.5vh);
+        }
+
+        .speech::after {
+            content: "";
+            border: calc(0.5vw + 0.5vh) solid transparent;
+            position: absolute;
+        }
+
+        .left.speech::after {
+            border-right-color: rgba(0, 0, 0, 0.6);
+            border-left: 0;
+            margin-top: calc(-0.5vw - 0.5vh);
+            left: calc(-0.5vw - 0.5vh);
+            top: 50%;
+        }
+    </style>
+
+</head>
+
+<body>
+    <header>
+        <h1>Rock Werchter</h1>
+    </header>
+    <form action="/rw_festival" method="POST">
+        <div id="input">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            <input type="submit" value="Submit">
+        </div>
+        <input type="hidden" id="x" name="x">
+        <input type="hidden" id="y" name="y">
+        <img src="https://www.festivalradar.io/RW/RW.jpg" alt="Your Image" id="image"
+            onclick="getPosition(event)">
+        <div id="marker" class="marker"></div>
+
+    </form>
+    <script>
+        var img = document.getElementById('image');
+
+        $(window).on('load', function () {
+            console.log("bin beim eventlistener");
+            var imgOffset = document.getElementById('image').getBoundingClientRect();
+            var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            var imgWidth = $("#image").get(0).offsetWidth;
+            var imgHeight = $("#image").get(0).offsetHeight;
+            var marker = document.getElementById('marker');
+            marker.style.left = (imgOffset.left + 10) + 'px';
+            marker.style.top = (imgOffset.top + 10) + 'px';
+            marker.style.display = 'block';
+            console.log("W:", imgWidth, "H:", imgHeight)
+            var locations = {{ locations | tojson
+        }};
+
+        for (var name in locations) {
+            if (locations.hasOwnProperty(name)) {
+                var x = locations[name][0];
+                var y = locations[name][1];
+                var box = document.createElement('div');
+                box.className = 'speech left';
+                box.innerHTML = name;
+                x = (imgOffset.left + x * imgWidth);
+                y = (imgOffset.top + y * imgHeight + scrollTop);
+                box.style.left = (x + 10) + 'px';
+                box.style.top = (y - 14) + 'px';
+                console.log("xPix:", x, "yPix:", y);
+                img.parentNode.appendChild(box); // Append to the parent of the image instead of document body
+            }
+        }
+        });
+
+        function getPosition(event) {
+            var x = event.offsetX;
+            var y = event.offsetY;
+            var imgOffset = document.getElementById('image').getBoundingClientRect();
+            var imgWidth = imgOffset.width;
+            var imgHeight = imgOffset.height;
+            var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            var adjustedX = x + imgOffset.left;
+            var adjustedY = y + imgOffset.top + scrollTop;
+            var xp = (x) / imgWidth; // Converting x and y to image-relative values
+            var yp = (y) / imgHeight;
+            document.getElementById('x').value = xp;
+            document.getElementById('y').value = yp;
+            var marker = document.getElementById('marker');
+            marker.style.left = adjustedX + 'px';
+            marker.style.top = adjustedY + 'px';
+            marker.style.display = 'block';
+        }
+
+
+
+        function submitForm(event) {
+            event.preventDefault(); // Prevent default form submission behavior
+            var name = document.getElementById('name').value;
+            var x = document.getElementById('x').value;
+            var y = document.getElementById('y').value;
+            console.log("Hier bin ich!", x, y);
+            var submissionDiv = document.createElement('div');
+            submissionDiv.className = 'submission';
+            submissionDiv.innerHTML = '<p><strong>Name:</strong> ' + name + '</p>' +
+                '<p><strong>Position:</strong> x=' + x + ', y=' + y + '</p>';
+            document.body.appendChild(submissionDiv);
+        }
+    </script>
+</body>
+
+</html>
