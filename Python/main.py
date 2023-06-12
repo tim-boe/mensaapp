@@ -1,7 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for
+import csv
 import time
 
 app = Flask(__name__, static_folder=r'C:\Users\tim\PycharmProjects\MensaApp\static')
+
+fc_path = r"C:\Users\tim\Documents\mensaapp\data\violations.csv"
 
 academica_main = {}
 academica_secret = {}
@@ -80,6 +83,21 @@ def academica_bp_f():
 @app.route("/vita", methods=['POST', 'GET'])
 def vita_f():
     return render_template("baustelle.html", locations=vita)
+
+
+@app.route("/fuckcars", methods=['POST', 'GET'])
+def fuckcars_f():
+    if request.method == "POST":
+        timestamp = request.form.get("time")
+        overtake_counts = request.form.get("overtakes")
+        distance = request.form.get("distance")
+        other_violations = request.form.get("other")
+        csv_string = str(timestamp) + ";" + str(overtake_counts) + ";" + str(distance) + ";" + str(other_violations)
+        with open(fc_path, "a", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow([csv_string])
+        return "tank you"
+    return render_template("fuckcars.html")
 
 
 def delete_old(locations, limit=time_limit):
